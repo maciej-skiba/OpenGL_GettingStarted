@@ -1,8 +1,6 @@
 
 #include "functions.hpp"
 
-#define LIGHTGREEN 
-
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
@@ -20,7 +18,7 @@ void processInput(GLFWwindow *window)
     }
 }
 
-void DrawTriangle()
+unsigned int CreateTriangleProgram(unsigned int &VAO)
 {
     float vertices[] = {
     -0.5f, -0.5f, 0.0f,
@@ -28,12 +26,19 @@ void DrawTriangle()
      0.0f,  0.5f, 0.0f
     }; 
 
+    //Vertex Array Object
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);  
+
     //Vertex Buffer Object
     unsigned int VBO;
     glGenBuffers(1, &VBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
     // script in GLSL - shader language
     const char *vertexShaderSource = "#version 330 core\n"
@@ -56,7 +61,7 @@ void DrawTriangle()
     "void main()\n"
     "{\n"
     "    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\0";
+    "}\n\0";
     
     unsigned int fragmentShader;
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -75,6 +80,8 @@ void DrawTriangle()
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+    
+    return shaderProgram;
 }
 
 void CheckShaderCompilation(unsigned int vertexShader)
@@ -88,8 +95,6 @@ void CheckShaderCompilation(unsigned int vertexShader)
         glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
-
-
 }
 
 void CheckShaderLink(unsigned int shaderProgram)
