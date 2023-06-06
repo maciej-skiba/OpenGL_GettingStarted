@@ -6,6 +6,6 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
-unsigned int CreateTriangleProgram(unsigned int &VAO);
+unsigned int CreateTriangleProgram(unsigned int &VAO, bool leftTriangle);
 void CheckShaderCompilation(unsigned int vertexShader);
 void CheckShaderLink(unsigned int shaderProgram);
